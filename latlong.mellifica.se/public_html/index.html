@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>latlong.mellifica.se - Konvertering SWEREF99/RT90/WGS84</title>
+	<script src="./latlong.js" type="text/javascript"></script>
+	<script src="./map.js" type="text/javascript"></script>
+	<script src="http://mellifica.se/geodesi/lat_lon_conv.js" type="text/javascript"></script>
+	<script src="http://mellifica.se/geodesi/gausskruger.js" type="text/javascript"></script>
+	<script src="./openlayers/OpenLayers.js" type="text/javascript"></script>
+	<script type="text/javascript"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqFv9LRHRsYy1r_9WfHpHF7Ja9fCCkM6k&sensor=false">
+	</script>
+	<style type="text/css">
+			body {font: 76%/1.2 Verdana, Helvetica, sans-serif;}
+			h1 {font-size: 1.4em;}
+			label {font-size: 1.0em;}
+			select, input, table, li {font-size: 1.0em;}
+			p {font-size: 0.9em;}
+			div#contact {font-size: 0.75em;}
+			legend {font-weight: bold;}
+	</style>
+
+	<script type="text/javascript">
+
+	 var _gaq = _gaq || [];
+	 _gaq.push(['_setAccount', 'UA-17509455-1']);
+	 _gaq.push(['_trackPageview']);
+
+	 (function() {
+	   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	 })();
+
+	</script>
+</head>
+<body onload="latlong_init();">
+<div id="boundary" style="width:500px;">
+	<h1 align="center">latlong.mellifica.se</h1>
+	
+	<div align="right"><input type="button" id="info_button" value="info"
+		onclick="toggle_info();" /></div>
+	
+	<div id="wgs84">
+	<fieldset><legend>SWEREF 99 (~WGS 84)</legend>
+	<table align="center">
+		<tr>
+			<td></td>
+			<td><center>Latitud</center></td>
+			<td><center>Longitud</center></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Grader:</td>
+			<td><input type="text" name="" id="lat_dd" maxlength="" size=""
+				onkeyup="keyup_lat_dd(event)" onblur="blur_lat(event);" value="" /></td>
+			<td><input type="text" name="" id="long_dd" maxlength="" size=""
+				onkeyup="keyup_long_dd(event);" onblur="blur_long(event);" value="" /></td>
+		</tr>
+		<tr>
+			<td>Grad/min:</td>
+			<td><input type="text" name="" id="lat_dm" maxlength="" size=""
+				onkeyup="keyup_lat_dm(event)" onblur="blur_lat(event);" value="" /></td>
+			<td><input type="text" name="" id="long_dm" maxlength="" size=""
+				onkeyup="keyup_long_dm(event)" onblur="blur_long(event);" value="" /></td>
+		</tr>
+		<tr>
+			<td>Grad/min/sek:</td>
+			<td><input type="text" name="" id="lat_dms" maxlength="" size=""
+				onkeyup="keyup_lat_dms(event)" onblur="blur_lat(event);" value="" /></td>
+			<td><input type="text" name="" id="long_dms" maxlength="" size=""
+				onkeyup="keyup_long_dms(event)" onblur="blur_long(event);" value="" /></td>
+		</tr>
+	</table>
+	
+	<div id="wgs84_info" style="display: none;" align="left">
+	<p>Mata in latitud/longitud i något av fälten ovan. De flesta
+	format ska accepteras, exempelvis latitud: 58 52 30.0, longitud: 11 8
+	45.0 i fälten för Grad/min/sek. Övriga fält på sidan uppdateras
+	automatiskt.</p>
+	<p>SWEREF 99 och WGS 84 är två olika referenssystem men likheterna
+	är stora och avvikelsen mellan systemen ligger på decimeternivå.
+	GPS-koordinater anges ofta i WGS 84 medan differentiell GPS-mätning från
+	SWEPOS är relaterad till SWEREF 99.</p>
+	<p>För konvertering enbart mellan grad, grad/min och grad/min/sek
+	behöver man inte ta hänsyn till referenssystem. Fungerar alltså även för
+	astronomiskt bruk med Decl. och R.A. även om R.A. är timmar och inte
+	grader.</p>
+	</div>
+	
+	</fieldset>
+	</div>
+	&nbsp;
+	<div id="rt90">
+	<fieldset><legend>RT 90</legend>
+	<table align="center">
+		<tr>
+			<td colspan="4" align="left"><label for="proj_rt90">Kartprojektion:
+			</label> <select id="proj_rt90" onchange="select_proj_rt90(event)"
+				onkeyup="select_proj_rt90(event)">
+				<option value="rt90_7.5_gon_v">RT90 7.5 gon V 0:-15</option>
+				<option value="rt90_5.0_gon_v">RT90 5 gon V 0:-15</option>
+				<option value="rt90_2.5_gon_v" selected="selected">RT90 2.5
+				gon V 0:-15 (Nationell)</option>
+				<option value="rt90_0.0_gon_v">RT90 0 gon V 0:-15</option>
+				<option value="rt90_2.5_gon_o">RT90 2.5 gon O 0:-15</option>
+				<option value="rt90_5.0_gon_o">RT90 5 gon O 0:-15</option>
+				<!-- <option value="test_case">Test</option> -->
+			</select></td>
+		</tr>
+		<tr>
+			<td>X:</td>
+			<td><input type="text" name="" id="x_rt90" maxlength="" size=""
+				onkeyup="keyup_rt90(event)" onblur="blur_rt90(event)" value="" /></td>
+			<td>Y:</td>
+			<td><input type="text" name="" id="y_rt90" maxlength="" size=""
+				onkeyup="keyup_rt90(event)" onblur="blur_rt90(event)" value="" /></td>
+		</tr>
+	</table>
+	
+	<div id="rt90_info" style="display: none;" align="left">
+	<p>Välj projektion och mata in X och Y. Övriga fält på sidan
+	uppdateras automatiskt. Heltalsdelen av X och Y ska vara 7 siffror lång
+	och enheten är meter.</p>
+	<p>Projektionen "RT90 2.5 gon V 0:-15" (uttal:
+	rt-90-två-och-en-halv-gon-väst) användes tidigare för allmänna svenska kartor.
+	Övriga projektioner användes för lokala kartor. I nedanstående kartbild
+	går det att aktivera ett kartskikt som visar lämplig zon för
+	respektive kartprojektion.</p>
+	<p>RT 90 och SWEREF 99 är två olika referenssystem där RT 90
+	använder ellipsoiden Bessel 1841 medan SWEREF 99 använder ellipsoiden
+	GRS 80. Transformationen mellan RT 90 och SWEREF 99 sker med Lantmäteriets 
+	direktprojektionssamband vilket är deras officiella transformeringsmetod. </p>
+	</div>
+	
+	</fieldset>
+	</div>
+	&nbsp;
+	<div id="sweref99">
+	<fieldset><legend>SWEREF 99 TM, SWEREF 99 dd mm</legend>
+	<table align="center">
+		<tr>
+			<td colspan="4" align="left"><label for="proj_sweref99">Kartprojektion:
+			</label> <select id="proj_sweref99" onchange="select_proj_sweref99(event)"
+				onkeyup="select_proj_sweref99(event)">
+				<option value="sweref_99_tm" selected="selected">SWEREF 99 TM</option>
+				<option value="sweref_99_1200">SWEREF 99 12 00</option>
+				<option value="sweref_99_1330">SWEREF 99 13 30</option>
+				<option value="sweref_99_1500">SWEREF 99 15 00</option>
+				<option value="sweref_99_1630">SWEREF 99 16 30</option>
+				<option value="sweref_99_1800">SWEREF 99 18 00</option>
+				<option value="sweref_99_1415">SWEREF 99 14 15</option>
+				<option value="sweref_99_1545">SWEREF 99 15 45</option>
+				<option value="sweref_99_1715">SWEREF 99 17 15</option>
+				<option value="sweref_99_1845">SWEREF 99 18 45</option>
+				<option value="sweref_99_2015">SWEREF 99 20 15</option>
+				<option value="sweref_99_2145">SWEREF 99 21 45</option>
+				<option value="sweref_99_2315">SWEREF 99 23 15</option>
+			</select></td>
+		</tr>
+		<tr>
+			<td>N:</td>
+			<td><input type="text" name="" id="n_sweref99" maxlength=""
+				size="" onkeyup="keyup_sweref99(event)" onblur="blur_sweref99(event)"
+				value="" /></td>
+			<td>E:</td>
+			<td><input type="text" name="" id="e_sweref99" maxlength=""
+				size="" onkeyup="keyup_sweref99(event)" onblur="blur_sweref99(event)"
+				value="" /></td>
+		</tr>
+	</table>
+	
+	<div id="sweref99_info" style="display:none;" align="left">
+	<p>Välj projektion och mata in N och E. Övriga fält på sidan
+	uppdateras automatiskt. Heltalsdelen av N ska vara 7 siffror lång och E
+	ska vara 6 siffror. Enheten är meter.</p>
+	<p>Projektionerna för SWEREF 99 har ersatt RT 90 för svenska
+	kartor. Projektionen "SWEREF 99 TM" används för allmänna
+	svenska kartor. Övriga projektioner används för lokala kartor. I
+	nedanstående kartbild går det att aktivera ett kartskikt som visar
+	lämplig zon för respektive kartprojektion.</p>
+	</div>
+	
+	</fieldset>
+	</div>
+	&nbsp;
+	<div>
+	<fieldset><legend>Karta</legend>
+	<div id="map" style="height:370px;"></div>
+	
+	<div id="map_info" style="display:none;" align="left">
+	<p>Klicka på kartan för att se en positions koordinater uttrycka i
+	lat/long, RT 90 och SWEREF 99. Centrering sker automatiskt.
+	</p>
+	<p>Navigering och zoom görs med verktygen till vänster men det går
+	även att navigera i miniatyrfönstret till höger.
+	<b>OBS</b>: Vissa webbläsare (till exempel Internet Explorer) tolkar ett klick
+	i zoom-listen som ett klick på kartan. Använd "+", "-" eller flytta 
+	zoom-markören istället ifall detta problem uppstår. 
+	</p>
+	<p>För att byta kartskikt och för att visa lämpliga zoner för valda
+	projektioner klickar man på "+"-tecknet uppe till höger.
+	</p>
+	<p>Projektionen på denna karta är Mercator där projektionen sker mot 
+	en cylinder som tangerar ekvatorn. Detta passar bra för exempelvis 
+	världskartor. Sverige blir dock lite knubbigare än vi är vana vid.<br/>
+	RT 90 och SWEREF 99 projicerar mot en något tillplattad cylinder som 
+	tangerar en viss angiven meridian, en så kallad 
+	transversal Mercator-projektion. Cylindern är alltså vriden 90 grader 
+	jämfört med en vanlig Mercator. 
+	Detta är ett synnerligen lämpligt val för kartor om man bor i 
+	ett avlångt land på relativt hög bredgrad.
+	</p>
+	<p><b>Ändring juli 2010:</b> NASA:s satellitkarta har slutat fungera och är 
+	nu ersatt med flera alternativa kartskikt från Google.
+	</p>	
+	<p><b>Ändring oktober 2013:</b> Googles karttjänst version 2 är ersatt av version 3. 
+	Välj kartskikt genom att klicka på "+"-tecknet uppe till höger på kartan.
+	</p>	
+	</div>
+	
+	</fieldset>
+	</div>
+	
+	<div id="about_info" style="display:none;" align="left">
+	<p>Direktlänkar:
+	<br/>
+	Det går att ha direktlänkar till en position på sidan.<br/> 
+	Exempel: 
+	<a href="http://latlong.mellifica.se/?latlong=59.326617,18.071697"
+		target="_blank">Här bor kungen</a>.
+	Alternativa format är:<br/>
+	-&nbsp;http://latlong.mellifica.se/?latlong=59.326617,18.071697<br/>
+	-&nbsp;http://latlong.mellifica.se/?rt90=6580615.864,1629018.925<br/>
+	-&nbsp;http://latlong.mellifica.se/?sweref99tm=6580452.57,674761.753<br/>
+	</p>
+
+	<p>Allmänt om webbsidan:
+	<br/>
+	Sverige har lämnat RT 90 och gått över till SWEREF 99 som referenssystem för 
+	geografiska positioner och som grund för kartprojektioner. På EU-nivå har 
+	INSPIRE-direktivet antagits vilket innebär att geografiskt kopplad information
+	ska göras tillgänglig för medborgare och myndigheter. Detta gör att behovet 
+	av konverteringar mellan de olika referenssystemen kommer att öka. Syftet med 
+	denna sida är att på ett smidigt sätt hjälpa till med dessa konverteringar.
+	</p>
+	<p>Alla formler och parametrar är hämtade från
+	Lantmäteriets webbsidor: <a href="http://www.lantmateriet.se/geodesi"
+		target="_blank"> http://www.lantmateriet.se/geodesi</a>.</p>
+<!--	<p>Bakomliggande JavaScript är licensierade med -->
+<!--	<a href="http://creativecommons.org/licenses/by-nc-sa/3.0/"-->
+<!--	   target="_blank"> Creative Commons: Attribution-Noncommercial-Share-->
+<!--	Alike</a> ifall det är någon som vill hacka vidare.-->
+<!--	</p>-->
+	<p><b>Ändring oktober 2013:</b> Licensen för bakomliggande JavaScript är 
+	ändrad till MIT. (Beräkningsalgoritmen har konverterats till ett antal  
+	programmeringsspråk och de som frågat har fått min tillåtelse att släppa sin
+	kod under MIT-licensen. Då kan det vara smidigt att använda samma licens 
+	även här.) 
+	</p>	
+	</div>
+	
+	<div id="contact"><br/>Arnold Andreasson, 2007-2013.<br/>
+	info@mellifica.se
+	</div>	
+</div>
+</body>
+</html>
