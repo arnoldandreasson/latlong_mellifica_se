@@ -1,5 +1,5 @@
 // Author: Arnold Andreasson, info@mellifica.se
-// Copyright (c) 2007-2013 Arnold Andreasson 
+// Copyright (c) 2007-2016 Arnold Andreasson 
 // License: MIT License as follows:
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+var latlong_init_finished = false;
 var lat_dd = null;
 var lat_dm = null;
 var lat_dms = null;
@@ -35,6 +36,7 @@ var e_sweref99 = null;
 // Decimal degrees. Type=float.
 var latitude = null;
 var longitude = null;
+var url_arguments = null;
 
 function latlong_init() {
 	
@@ -57,8 +59,10 @@ function latlong_init() {
 	
 	var url_args = location.search.substring(1);
 	if (url_args.length > 0) {
-		parse_url_arguments(url_args);
+		url_arguments = url_args 
+		parse_url_arguments();
 	}
+	latlong_init_finished = true;
 }
 
 // Set and get functions for external use. Storage, map, etc.
@@ -259,7 +263,13 @@ function toggle_info() {
 }
 
 // Use position if url arguments are supplied.
-function parse_url_arguments(url_args) {
+function parse_url_arguments() {
+
+	if (latlong_init_finished == false) {
+		setTimeout(parse_url_arguments, 3000) // 3 sec.	
+	}
+	
+	var url_args = url_arguments
 	var result = url_args.split(/[=,]/);
 	if ((result[0] != '') && (result[0] != null) &&
 		(result[1] != '') && (result[1] != null) &&

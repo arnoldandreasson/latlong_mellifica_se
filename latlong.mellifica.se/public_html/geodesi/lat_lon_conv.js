@@ -1,5 +1,5 @@
 // Author: Arnold Andreasson, info@mellifica.se
-// Copyright (c) 2007-2013 Arnold Andreasson 
+// Copyright (c) 2007-2016 Arnold Andreasson 
 // License: MIT License as follows:
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy

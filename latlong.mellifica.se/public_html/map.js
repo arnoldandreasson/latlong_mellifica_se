@@ -1,5 +1,5 @@
 // Author: Arnold Andreasson, info@mellifica.se
-// Copyright (c) 2007-2013 Arnold Andreasson 
+// Copyright (c) 2007-2016 Arnold Andreasson 
 // License: MIT License as follows:
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,6 +30,9 @@ function map_init() {
 		controls: []
 	});
 
+	var openstreetmap = new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap");
+	map.addLayer(openstreetmap);
+
 	var ghyb = new OpenLayers.Layer.Google(
 		"Google satellite and streets",
 		{type: google.maps.MapTypeId.HYBRID,
@@ -48,8 +51,6 @@ function map_init() {
 		{type: google.maps.MapTypeId.TERRAIN, 
 		 numZoomLevels: 16});
 
-	map.addLayers([ghyb, gsat, gmap, gphy]);
-	
 	markers = new OpenLayers.Layer.Markers("Marker");
 	rt90_meridian = new OpenLayers.Layer.Boxes("RT 90 Zone");
 	rt90_meridian.setVisibility(false);
@@ -60,7 +61,13 @@ function map_init() {
 
 	map.addControl(new OpenLayers.Control.PanZoomBar());
 	map.addControl(new OpenLayers.Control.LayerSwitcher());
-	map.addControl(new OpenLayers.Control.MousePosition());
+	map.addControl(new OpenLayers.Control.ScaleLine());
+	map.addControl(new OpenLayers.Control.MousePosition({
+		prefix: "Long: ",
+		separator: " Lat: ",
+		numDigits: 4,
+		displayProjection: new OpenLayers.Projection("EPSG:4326")
+		}));
 
 	map.events.register("click", map, function(e) { 
 		var lonlat = map.getLonLatFromViewPortPx(e.xy).transform('EPSG:3857', 'EPSG:4326');
@@ -73,11 +80,14 @@ function map_init() {
 		// longitude and latitude declared in latlong.js.
 		map.setCenter(new OpenLayers.LonLat(longitude, latitude).transform('EPSG:4326', 'EPSG:3857'), zoomlevel);
 	});
+
+	map.addLayers([ghyb, gsat, gmap, gphy]);
+
 }
 function show_map_marker(lat, lon) {
 	markers.clearMarkers();
 	map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:3857'));
-	var url = 'http://latlong.mellifica.se/images/marker-gold.png';
+	var url = './images/marker-gold.png';
 	var sz = new OpenLayers.Size(21, 25);
 	var calculateOffset = function(size) {
 		return new OpenLayers.Pixel(-(size.w/2), -size.h);
