@@ -16,6 +16,7 @@
 	<style type="text/css">
 			body {font: 76%/1.2 Verdana, Helvetica, sans-serif;}
 			h1 {font-size: 1.4em;}
+			a#ext-link {font-size: 0.8em;}
 			label {font-size: 1.0em;}
 			select, input, table, li {font-size: 1.0em;}
 			p {font-size: 0.9em;}
@@ -42,8 +43,14 @@
 <div id="boundary" style="width:500px;">
 	<h1 align="center">latlong.mellifica.se</h1>
 	
-	<div align="right"><input type="button" id="info_button" value="info"
-		onclick="toggle_info();" /></div>
+	<div align="right">
+
+		<a id="ext-link" type="button" href="https://pap.as/sweref/"
+		target="_blank">tabellkonvertering</a>
+
+		<input type="button" id="info_button" value="info"
+		onclick="toggle_info();" />
+	</div>
 	
 	<div id="wgs84">
 	<fieldset><legend>SWEREF 99 (~WGS 84)</legend>
@@ -260,9 +267,17 @@
 	kod under MIT-licensen. Då kan det vara smidigt att använda samma licens 
 	även här.) 
 	</p>	
+	<p><b>Ändring november 2017:</b> För att fira att sidan varit i drift i 10 år 
+	så passar jag på att lägga in en länk till en extern sida för att konvertera
+	positioner i tabellformat. Något som varit efterfrågat länge men jag har inte 
+	orkat fixa det själv. 
+	Statistiken för de senaste 5 åren visar att det ofta är över 2000 sessioner 
+	per månad fördelat på över 1000 besökare per månad. 
+	Kul att sidan används.
+	</p>	
 	</div>
 	
-	<div id="contact"><br/>Arnold Andreasson, 2007-2016.<br/>
+	<div id="contact"><br/>Arnold Andreasson, 2007-2017.<br/>
 	info@mellifica.se
 	</div>	
 </div>
